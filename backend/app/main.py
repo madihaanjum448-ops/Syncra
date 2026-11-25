@@ -1,6 +1,22 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel, EmailStr, constr
+from pydantic import BaseModel, EmailStr, Field
+
+# ---------- Pydantic schemas ----------
+class StudentSignUp(BaseModel):
+    student_id: str = Field(..., pattern=r"^\d[A-Z]{2}\d{2}[A-Z]{2}\d{3}$")
+    email: EmailStr
+    password: str
+
+class PresidentSignUp(BaseModel):
+    email: EmailStr
+    invite_code: str
+    password: str
+
+class FacultySignUp(BaseModel):
+    email: EmailStr
+    password: str
+
 from typing import Literal
 import os
 
@@ -61,3 +77,16 @@ async def faculty_signup(payload: FacultySignUp):
 @app.get("/api/v1/protected/student")
 async def student_protected(user=Depends(require_role("student"))):
     return {"msg": f"Hello student {user['email']}"}
+
+# Include routers
+from .routers import notifications
+app.include_router(notifications.router)
+# Include budget router
+from .routers import budget
+app.include_router(budget.router)
+
+# Start APScheduler jobs on startup
+from .workers.scheduler import schedule_jobs
+@app.on_event("startup")
+async def startup_event():
+    schedule_jobs()
