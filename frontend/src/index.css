@@ -1,0 +1,19 @@
+/* Global CSS variables for design tokens */
+:root {
+  --paper: #F6F1E7;
+  --ink: #1E1B3A;
+  --coral: #FF5A3C;
+  --marigold: #FFC233;
+  --mint: #7ED9B5;
+  --periwinkle: #8E9BFF;
+  --blush: #FFB8C9;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Example utility classes for custom tokens */
+.bg-paper { background-color: var(--paper); }
+.text-ink { color: var(--ink); }
+.border-ink { border-color: var(--ink); }
